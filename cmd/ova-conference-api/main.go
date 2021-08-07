@@ -17,10 +17,10 @@ func check() {
 }
 
 func checkDisjoin() {
-	fmt.Println("Check disjoin")
+	fmt.Println("Check disjoin:")
 	source := []string{"1", "2", "3", "4", "5", "6", "7", "8", "9"}
 	filter := []string{"1", "2", "3", "9"}
-	result := utils.Disjoin(source, filter)
+	result, _ := utils.Disjoin(source, filter)
 	fmt.Println("source:")
 	fmt.Println(source)
 	fmt.Println("filter:")
@@ -31,9 +31,9 @@ func checkDisjoin() {
 }
 
 func checkSwap() {
-	fmt.Println("Check swap")
+	fmt.Println("Check swap:")
 	source := map[string]string{"key1": "value1", "key2": "value2", "key3": "value3"}
-	result := utils.SwapKeyValues(source)
+	result, _ := utils.SwapKeyValues(source)
 	fmt.Println("source:")
 	fmt.Println(source)
 	fmt.Println("Result:")
@@ -44,9 +44,11 @@ func checkSwap() {
 func checkSplit() {
 	fmt.Println("Check split:")
 	source := []int{1, 2, 3, 4, 5, 6}
-	result := utils.Split(source, 5)
+	chunkSize := 5
+	result, _ := utils.Split(source, chunkSize)
 	fmt.Println("source:")
 	fmt.Println(source)
+	fmt.Printf("chunk size %v %s", chunkSize, "\n")
 	fmt.Println("Result:")
 	fmt.Println(result)
 	fmt.Println("")
