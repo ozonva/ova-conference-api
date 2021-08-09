@@ -9,14 +9,18 @@ func Split(source []int, chunkSize int) ([][]int, error) {
 	if source == nil {
 		return nil, errors.New("source slice is nil")
 	}
-	chunkCount := (len(source) + chunkSize - 1) / chunkSize
+
+	copyOfSource := make([]int, len(source))
+	copy(copyOfSource, source)
+
+	chunkCount := (len(copyOfSource) + chunkSize - 1) / chunkSize
 	result := make([][]int, chunkCount)
 	var rightPosition, index int
 
 	for leftPosition := 0; leftPosition < len(source); leftPosition += chunkSize {
-		rightPosition = min(leftPosition+chunkSize, len(source))
+		rightPosition = min(leftPosition+chunkSize, len(copyOfSource))
 
-		batch := source[leftPosition:rightPosition]
+		batch := copyOfSource[leftPosition:rightPosition]
 		result[index] = batch
 		index++
 	}
