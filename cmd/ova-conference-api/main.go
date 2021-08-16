@@ -2,54 +2,57 @@ package main
 
 import (
 	"fmt"
+	"ova-conference-api/internal/domain"
 	"ova-conference-api/internal/utils"
+	"time"
 )
 
 func main() {
 	fmt.Printf("Hello from %s %s", "ova-conference-api", "\n")
+	openConfigInLoop()
 	check()
 }
 
+func openConfigInLoop() {
+	result := utils.ReadConfigInLoop("test_config.json", 10)
+	fmt.Println(result)
+}
+
 func check() {
-	checkSplit()
-	checkSwap()
-	checkDisjoin()
+	checkDomainSplit()
+	checkToMap()
 }
 
-func checkDisjoin() {
-	fmt.Println("Check disjoin:")
-	source := []string{"1", "2", "3", "4", "5", "6", "7", "8", "9"}
-	filter := []string{"1", "2", "3", "9"}
-	result, _ := utils.Disjoin(source, filter)
+func checkToMap() {
+	count := 10
 	fmt.Println("source:")
-	fmt.Println(source)
-	fmt.Println("filter:")
-	fmt.Println(filter)
+	conferences := GenerateConferences(count)
+	fmt.Println(conferences)
 	fmt.Println("Result:")
-	fmt.Println(result)
+	mapByUserId, _ := utils.ToMapByUserId(conferences)
+	fmt.Println(mapByUserId)
 	fmt.Println("")
+
 }
 
-func checkSwap() {
-	fmt.Println("Check swap:")
-	source := map[string]string{"key1": "value1", "key2": "value2", "key3": "value3"}
-	result, _ := utils.SwapKeyValues(source)
-	fmt.Println("source:")
-	fmt.Println(source)
-	fmt.Println("Result:")
-	fmt.Println(result)
-	fmt.Println("")
+func GenerateConferences(count int) []domain.Conference {
+	conferences := make([]domain.Conference, count)
+	var counter uint64 = 0
+	for counter = 0; counter < 10; counter++ {
+		conferences[counter] = *domain.NewConference(counter, "TestConference", &domain.EventTime{Time: time.Now()})
+	}
+	return conferences
 }
 
-func checkSplit() {
-	fmt.Println("Check split:")
-	source := []int{1, 2, 3, 4, 5, 6}
-	chunkSize := 5
-	result, _ := utils.Split(source, chunkSize)
+func checkDomainSplit() {
+	count := 10
+	conferences := GenerateConferences(count)
+
 	fmt.Println("source:")
-	fmt.Println(source)
-	fmt.Printf("chunk size %v %s", chunkSize, "\n")
-	fmt.Println("Result:")
+	fmt.Println(conferences)
+	result, _ := utils.SplitToBulks(conferences, 3)
+	fmt.Println("result:")
 	fmt.Println(result)
 	fmt.Println("")
+
 }
