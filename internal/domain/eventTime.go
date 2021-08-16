@@ -11,12 +11,7 @@ type EventTime struct {
 }
 
 func (et EventTime) String() string {
-	bytes, err := et.MarshalJSON()
-	if err != nil {
-		fmt.Println(err)
-		return et.Format(layout)
-	}
-	return string(bytes)
+	return et.Format(layout)
 }
 
 const layout = "2006-01-02 15:04:05"
