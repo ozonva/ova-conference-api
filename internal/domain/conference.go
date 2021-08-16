@@ -16,12 +16,7 @@ type Conference struct {
 }
 
 func (conference Conference) String() string {
-	bytes, err := json.Marshal(conference)
-	if err != nil {
-		fmt.Println(err)
-		return fmt.Sprintf("Conference id:%v name:%v Date:%s", conference.Id, conference.Name, conference.EventTime.String())
-	}
-	return string(bytes)
+	return fmt.Sprintf("Conference id:%v name:%v Date:%s", conference.Id, conference.Name, conference.EventTime.String())
 }
 
 func NewConference(userId uint64, name string, eventTime *EventTime) *Conference {

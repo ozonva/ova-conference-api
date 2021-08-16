@@ -14,7 +14,7 @@ func (et EventTime) String() string {
 	bytes, err := et.MarshalJSON()
 	if err != nil {
 		fmt.Println(err)
-		return et.String()
+		return et.Format(layout)
 	}
 	return string(bytes)
 }
