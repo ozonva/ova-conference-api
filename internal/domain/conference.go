@@ -30,6 +30,17 @@ func NewConference(userId uint64, name string, eventTime *EventTime) *Conference
 	return &result
 }
 
+func MakeConference(userId uint64, name string, eventTime *EventTime) Conference {
+	result := Conference{
+		EventTime: eventTime,
+		Name:      name,
+		UserId:    userId,
+	}
+	result.Id = uuid.New()
+
+	return result
+}
+
 func NewConferenceFromByteJson(conferenceJson []byte) (*Conference, error) {
 	var conference Conference
 	err := json.Unmarshal(conferenceJson, &conference)

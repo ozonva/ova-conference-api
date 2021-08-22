@@ -15,15 +15,25 @@ func SplitToBulks(conferences []domain.Conference, chunkSize int) ([][]domain.Co
 
 	copyOfSource := make([]domain.Conference, len(conferences))
 	copy(copyOfSource, conferences)
+	return SplitToBulksWithoutCopy(copyOfSource, chunkSize)
+}
 
-	chunkCount := (len(copyOfSource) + chunkSize - 1) / chunkSize
+func SplitToBulksWithoutCopy(conferences []domain.Conference, chunkSize int) ([][]domain.Conference, error) {
+	if chunkSize < 1 {
+		return nil, errors.New("chunkSize should be greater then 1")
+	}
+	if conferences == nil {
+		return nil, errors.New("source slice is nil")
+	}
+
+	chunkCount := (len(conferences) + chunkSize - 1) / chunkSize
 	result := make([][]domain.Conference, chunkCount)
 	var rightPosition, index int
 
 	for leftPosition := 0; leftPosition < len(conferences); leftPosition += chunkSize {
-		rightPosition = min(leftPosition+chunkSize, len(copyOfSource))
+		rightPosition = min(leftPosition+chunkSize, len(conferences))
 
-		batch := copyOfSource[leftPosition:rightPosition]
+		batch := conferences[leftPosition:rightPosition]
 		result[index] = batch
 		index++
 	}
