@@ -28,27 +28,30 @@ type repository struct {
 	*sync.Mutex
 	timer       *time.Timer
 	initializer *sync.Once
-	finalizer   *sync.Once
-	closeChanel chan bool
+	closeChanel chan struct{}
 	state       state
 }
 
 func (rep *repository) Save(conference domain.Conference) {
+	rep.Mutex.Lock()
+	defer rep.Mutex.Unlock()
+
 	if rep.state != initialized {
 		return
 	}
-	rep.Mutex.Lock()
 	rep.buffer = append(rep.buffer, conference)
-	rep.Mutex.Unlock()
 }
 
 func (rep *repository) Close() {
-	if rep.state == initialized {
-		rep.Lock()
-		rep.state = closed
-		rep.closeChanel <- true
-		rep.Unlock()
+	rep.Mutex.Lock()
+	defer rep.Mutex.Unlock()
+
+	if rep.state != initialized {
+		return
 	}
+	rep.state = closed
+	rep.timer.Stop()
+	close(rep.closeChanel)
 }
 
 func (rep *repository) Init(duration time.Duration) {
@@ -61,14 +64,12 @@ func (rep *repository) Init(duration time.Duration) {
 }
 
 func (rep *repository) flush() {
-	rep.finalizer.Do(func() {
+	if len(rep.buffer) > 0 {
 		errorEntities := rep.flusher.Flush(rep.buffer)
 		if len(errorEntities) > 0 {
 			fmt.Printf("error entities %v\n", errorEntities)
 		}
-		close(rep.closeChanel)
-		rep.timer.Stop()
-	})
+	}
 }
 
 func (rep repository) awaitingFlush() {
@@ -79,8 +80,7 @@ func (rep repository) awaitingFlush() {
 			return
 		case <-rep.timer.C:
 			rep.state = closed
-			rep.flush()
-			return
+			close(rep.closeChanel)
 		}
 	}
 }
@@ -91,8 +91,7 @@ func NewSaver(capacity int, flusher flusher.Flusher) Saver {
 		buffer:      make([]domain.Conference, capacity, capacity),
 		Mutex:       &sync.Mutex{},
 		initializer: &sync.Once{},
-		finalizer:   &sync.Once{},
-		closeChanel: make(chan bool),
+		closeChanel: make(chan struct{}),
 		state:       empty,
 	}
 }
