@@ -8,8 +8,8 @@ import (
 )
 
 type Config struct {
-	Url              string `json:"url"`
-	TimeoutInSeconds int    `json:"timeout_in_seconds"`
+	Port             int `json:"port"`
+	TimeoutInSeconds int `json:"timeout_in_seconds"`
 }
 
 func ReadConfigFromFile(filePah string) func() (Config, error) {

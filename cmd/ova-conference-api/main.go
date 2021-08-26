@@ -1,17 +1,22 @@
 package main
 
 import (
-	"fmt"
+	"github.com/rs/zerolog/log"
+	server "ova-conference-api/internal/server/ova-conference-api"
 	"ova-conference-api/internal/utils"
 )
 
 func main() {
-	fmt.Printf("Hello from %s %s", "ova-conference-api", "\n")
-	openConfigInLoop()
+	log.Print("Starting server...")
+	config, err := utils.ReadConfigFromFile("test_config.json")()
+	if err != nil {
+		log.Err(err)
+		log.Fatal()
+	}
+	log.Printf("Config is %v", config)
 
-}
-
-func openConfigInLoop() {
-	result := utils.ReadConfigInLoop("test_config.json", 10)
-	fmt.Println(result)
+	if err := server.Start(config); err != nil {
+		log.Err(err)
+		log.Fatal()
+	}
 }

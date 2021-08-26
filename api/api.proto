@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package ova.conference.api;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/ozonva/ova-conference-api/pkg/ova-conference-api";
+
+service Conferences{
+  rpc CreateConference(CreateConferenceRequest) returns (ConferenceResponse){};
+  rpc DescribeConference(CreateConferenceRequest) returns (ConferenceResponse){};
+  rpc ListConference(google.protobuf.Empty) returns (ListConferenceResponse){};
+  rpc RemoveConference(CreateConferenceRequest) returns (google.protobuf.Empty){};
+}
+
+message CreateConferenceRequest{
+  uint64 userid = 2;
+  string name = 3;
+  google.protobuf.Timestamp eventTime = 4;
+  int32 participantCount = 5;
+  int32 speakerCount = 6;
+}
+
+message ListConferenceResponse{
+  repeated ConferenceResponse Items = 1;
+}
+
+message ConferenceResponse{
+  UUID id = 1;
+  uint64 userid = 2;
+  string name = 3;
+  google.protobuf.Timestamp eventTime = 4;
+  int32 participantCount = 5;
+  int32 speakerCount = 6;
+}
+message UUID{
+  string value = 1;
+}
