@@ -2,7 +2,9 @@ package domain
 
 import (
 	"database/sql/driver"
+	"errors"
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"strings"
 	"time"
 )
@@ -12,7 +14,13 @@ type EventTime struct {
 }
 
 func (et *EventTime) Scan(value interface{}) error {
-	et.Time = value.(time.Time)
+	val, ok := value.(time.Time)
+	if !ok {
+		errorStr := fmt.Sprintf("Error while casting value to Time. Value: %v", value)
+		log.Log().Msgf(errorStr)
+		return errors.New(errorStr)
+	}
+	et.Time = val
 	return nil
 }
 
