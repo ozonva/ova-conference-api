@@ -7,7 +7,7 @@ import (
 )
 
 func (server *GRPCServer) DescribeConference(ctx context.Context, request *conf.EntityConferenceRequest) (*conf.ConferenceResponse, error) {
-	log.Info().Msgf("DescribeConference request %v", request)
+	log.Info().Msgf("DescribeConference request: %v", request)
 	result, err := server.repo.DescribeEntity(ctx, request.Id)
 	if err != nil {
 		log.Err(err)

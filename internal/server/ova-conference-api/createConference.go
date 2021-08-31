@@ -7,7 +7,7 @@ import (
 )
 
 func (server *GRPCServer) CreateConference(ctx context.Context, request *conf.CreateConferenceRequest) (*conf.ConferenceResponse, error) {
-	log.Info().Msgf("CreateConference request %v", request)
+	log.Info().Msgf("CreateConference request: %v", request)
 	result, err := server.repo.AddEntity(ctx, ToConferenceDomain(request))
 	if err != nil {
 		log.Err(err)

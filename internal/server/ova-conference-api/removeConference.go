@@ -8,7 +8,7 @@ import (
 )
 
 func (server *GRPCServer) RemoveConference(ctx context.Context, request *conf.EntityConferenceRequest) (*empty.Empty, error) {
-	log.Info().Msgf("RemoveConference request %v", request)
+	log.Info().Msgf("RemoveConference request: %v", request)
 	err := server.repo.DeleteEntity(ctx, request.Id)
 	if err != nil {
 		log.Err(err)

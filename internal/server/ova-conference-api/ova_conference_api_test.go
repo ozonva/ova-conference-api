@@ -58,6 +58,14 @@ var _ = Describe("Server test", func() {
 			Expect(res.ParticipantCount).To(Equal(entity.ParticipantCount))
 		})
 
+		It("List invalid parameters", func() {
+			_, err := api.ListConference(ctx, &conf.ListConferenceRequest{
+				Limit:  int64(-1),
+				Offset: int64(2),
+			})
+			Expect(err).NotTo(BeNil())
+		})
+
 		It("List", func() {
 			entity := domain.MakeConference("test", &domain.EventTime{Time: time.Now()}, 1, 2)
 			someItems := []domain.Conference{entity, entity, entity}
@@ -72,7 +80,7 @@ var _ = Describe("Server test", func() {
 			Expect(len(res.Items)).To(Equal(len(someItems)))
 		})
 
-		It("RemoveRule", func() {
+		It("RemoveEntity", func() {
 			mockRepo.EXPECT().DeleteEntity(ctx, int64(1)).Return(nil).Times(1)
 
 			_, err := api.RemoveConference(ctx, &conf.EntityConferenceRequest{
