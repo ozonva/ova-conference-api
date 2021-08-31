@@ -1,6 +1,7 @@
 package saver
 
 import (
+	"context"
 	"fmt"
 	"ova-conference-api/internal/domain"
 	"ova-conference-api/internal/utils/flusher"
@@ -22,17 +23,18 @@ const (
 	closed
 )
 
-type repository struct {
+type repositorySaver struct {
 	flusher flusher.Flusher
 	buffer  []domain.Conference
 	*sync.Mutex
 	timer       *time.Timer
 	initializer *sync.Once
 	closeChanel chan struct{}
+	ctx         context.Context
 	state       state
 }
 
-func (rep *repository) Save(conference domain.Conference) {
+func (rep *repositorySaver) Save(conference domain.Conference) {
 	rep.Mutex.Lock()
 	defer rep.Mutex.Unlock()
 
@@ -42,7 +44,7 @@ func (rep *repository) Save(conference domain.Conference) {
 	rep.buffer = append(rep.buffer, conference)
 }
 
-func (rep *repository) Close() {
+func (rep *repositorySaver) Close() {
 	rep.Mutex.Lock()
 	defer rep.Mutex.Unlock()
 
@@ -54,7 +56,7 @@ func (rep *repository) Close() {
 	close(rep.closeChanel)
 }
 
-func (rep *repository) Init(duration time.Duration) {
+func (rep *repositorySaver) Init(duration time.Duration) {
 	var initialF = func() {
 		rep.timer = time.NewTimer(duration)
 		rep.state = initialized
@@ -63,16 +65,16 @@ func (rep *repository) Init(duration time.Duration) {
 	rep.initializer.Do(initialF)
 }
 
-func (rep *repository) flush() {
+func (rep *repositorySaver) flush() {
 	if len(rep.buffer) > 0 {
-		errorEntities := rep.flusher.Flush(rep.buffer)
+		errorEntities := rep.flusher.Flush(rep.ctx, rep.buffer)
 		if len(errorEntities) > 0 {
 			fmt.Printf("error entities %v\n", errorEntities)
 		}
 	}
 }
 
-func (rep repository) awaitingFlush() {
+func (rep repositorySaver) awaitingFlush() {
 	for {
 		select {
 		case <-rep.closeChanel:
@@ -86,7 +88,7 @@ func (rep repository) awaitingFlush() {
 }
 
 func NewSaver(capacity int, flusher flusher.Flusher) Saver {
-	return &repository{
+	return &repositorySaver{
 		flusher:     flusher,
 		buffer:      make([]domain.Conference, capacity, capacity),
 		Mutex:       &sync.Mutex{},

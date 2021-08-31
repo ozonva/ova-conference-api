@@ -9,17 +9,25 @@ option go_package = "github.com/ozonva/ova-conference-api/pkg/ova-conference-api
 
 service Conferences{
   rpc CreateConference(CreateConferenceRequest) returns (ConferenceResponse){};
-  rpc DescribeConference(CreateConferenceRequest) returns (ConferenceResponse){};
-  rpc ListConference(google.protobuf.Empty) returns (ListConferenceResponse){};
-  rpc RemoveConference(CreateConferenceRequest) returns (google.protobuf.Empty){};
+  rpc DescribeConference(EntityConferenceRequest) returns (ConferenceResponse){};
+  rpc ListConference(ListConferenceRequest) returns (ListConferenceResponse){};
+  rpc RemoveConference(EntityConferenceRequest) returns (google.protobuf.Empty){};
+}
+
+message ListConferenceRequest{
+int64 offset = 1;
+int64 limit = 2;
 }
 
 message CreateConferenceRequest{
-  uint64 userid = 2;
-  string name = 3;
-  google.protobuf.Timestamp eventTime = 4;
-  int32 participantCount = 5;
-  int32 speakerCount = 6;
+  string name = 1;
+  google.protobuf.Timestamp eventTime = 2;
+  int32 participantCount = 3;
+  int32 speakerCount = 4;
+}
+
+message EntityConferenceRequest{
+  int64 id = 1;
 }
 
 message ListConferenceResponse{
@@ -27,13 +35,9 @@ message ListConferenceResponse{
 }
 
 message ConferenceResponse{
-  UUID id = 1;
-  uint64 userid = 2;
-  string name = 3;
-  google.protobuf.Timestamp eventTime = 4;
-  int32 participantCount = 5;
-  int32 speakerCount = 6;
-}
-message UUID{
-  string value = 1;
+  int64 id = 1;
+  string name = 2;
+  google.protobuf.Timestamp eventTime = 3;
+  int32 participantCount = 4;
+  int32 speakerCount = 5;
 }

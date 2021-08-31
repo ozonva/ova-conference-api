@@ -40,17 +40,17 @@ func SplitToBulksWithoutCopy(conferences []domain.Conference, chunkSize int) ([]
 	return result, nil
 }
 
-func ToMapByUserId(conferences []domain.Conference) (map[uint64]domain.Conference, error) {
+func ToMapById(conferences []domain.Conference) (map[int64]domain.Conference, error) {
 	if conferences == nil {
 		return nil, errors.New("input parameter is nil")
 	}
-	result := make(map[uint64]domain.Conference, len(conferences))
+	result := make(map[int64]domain.Conference, len(conferences))
 	for _, val := range conferences {
-		if _, alreadyExist := result[val.UserId]; alreadyExist {
+		if _, alreadyExist := result[val.Id]; alreadyExist {
 			return nil, errors.New("not unique userId key")
 		}
 
-		result[val.UserId] = val
+		result[val.Id] = val
 	}
 	return result, nil
 }

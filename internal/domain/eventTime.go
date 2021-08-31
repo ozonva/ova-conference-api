@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"database/sql/driver"
 	"fmt"
 	"strings"
 	"time"
@@ -10,6 +11,14 @@ type EventTime struct {
 	time.Time
 }
 
+func (et *EventTime) Scan(value interface{}) error {
+	et.Time = value.(time.Time)
+	return nil
+}
+
+func (et EventTime) Value() (driver.Value, error) {
+	return et.Time, nil
+}
 func (et EventTime) String() string {
 	return et.Format(layout)
 }

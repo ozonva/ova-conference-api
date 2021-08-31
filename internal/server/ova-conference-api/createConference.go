@@ -6,7 +6,11 @@ import (
 	conf "ova-conference-api/pkg/api/github.com/ozonva/ova-conference-api/pkg/ova-conference-api"
 )
 
-func (G *GRPCServer) CreateConference(ctx context.Context, request *conf.CreateConferenceRequest) (*conf.ConferenceResponse, error) {
-	log.Info().Msg("CreateConference request")
-	return getDummyConference(), nil
+func (server *GRPCServer) CreateConference(ctx context.Context, request *conf.CreateConferenceRequest) (*conf.ConferenceResponse, error) {
+	log.Info().Msgf("CreateConference request %v", request)
+	result, err := server.repo.AddEntity(ctx, ToConferenceDomain(request))
+	if err != nil {
+		log.Err(err)
+	}
+	return ToConferenceResponse(result), err
 }

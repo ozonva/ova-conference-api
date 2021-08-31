@@ -37,6 +37,10 @@ run:
 test: mocks
 	go test ./...
 
+.PHONY: migration
+migration:
+	goose postgres "user=postgres password=postgres  dbname=ozon sslmode=disable" up
+
 .PHONY: mocks
 mocks:
 	rm -rf ./internal/mocks/mock_*
