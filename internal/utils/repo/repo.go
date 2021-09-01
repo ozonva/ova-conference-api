@@ -1,9 +1,19 @@
 package repo
 
-import "ova-conference-api/internal/domain"
+import (
+	"context"
+	"ova-conference-api/internal/domain"
+)
 
 type Repo interface {
-	AddEntities(entities []domain.Conference) error
-	ListEntities(limit, offset uint64) ([]domain.Conference, error)
-	DescribeEntity(entityId uint64) (*domain.Conference, error)
+	AddEntities(ctx context.Context, entities []domain.Conference) error
+	AddEntity(ctx context.Context, entity domain.Conference) (*domain.Conference, error)
+	ListEntities(ctx context.Context, limit, offset int64) ([]domain.Conference, error)
+	DescribeEntity(ctx context.Context, entityId int64) (*domain.Conference, error)
+	DeleteEntity(ctx context.Context, entityId int64) error
+	Open() error
+}
+
+func NewRepo(connectionString string) Repo {
+	return &repository{connection: connectionString}
 }

@@ -3,41 +3,36 @@ package domain
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 )
 
 type Conference struct {
-	Id               uuid.UUID
-	UserId           uint64
-	Name             string
-	EventTime        *EventTime
-	ParticipantCount int32
-	SpeakerCount     int32
+	Id               int64      `db:"id"`
+	Name             string     `db:"name"`
+	EventTime        *EventTime `db:"event_time"`
+	ParticipantCount int32      `db:"participant_count"`
+	SpeakerCount     int32      `db:"speaker_count"`
 }
 
 func (conference Conference) String() string {
 	return fmt.Sprintf("Conference id:%v name:%v Date:%s", conference.Id, conference.Name, conference.EventTime.String())
 }
 
-func NewConference(userId uint64, name string, eventTime *EventTime) *Conference {
+func NewConference(name string, eventTime *EventTime) *Conference {
 	result := Conference{
 		EventTime: eventTime,
 		Name:      name,
-		UserId:    userId,
 	}
-	result.Id = uuid.New()
 
 	return &result
 }
 
-func MakeConference(userId uint64, name string, eventTime *EventTime) Conference {
+func MakeConference(name string, eventTime *EventTime, participantCount int32, speakerCount int32) Conference {
 	result := Conference{
-		EventTime: eventTime,
-		Name:      name,
-		UserId:    userId,
+		EventTime:        eventTime,
+		Name:             name,
+		ParticipantCount: participantCount,
+		SpeakerCount:     speakerCount,
 	}
-	result.Id = uuid.New()
-
 	return result
 }
 

@@ -1,6 +1,7 @@
 package flusher
 
 import (
+	"context"
 	"fmt"
 	"ova-conference-api/internal/domain"
 	"ova-conference-api/internal/utils"
@@ -8,7 +9,7 @@ import (
 )
 
 type Flusher interface {
-	Flush(entities []domain.Conference) []domain.Conference
+	Flush(ctx context.Context, entities []domain.Conference) []domain.Conference
 }
 
 func NewFlusher(chunkSize int, entityRepo repo.Repo) Flusher {
@@ -23,7 +24,7 @@ type flusher struct {
 	entityRepo repo.Repo
 }
 
-func (flush flusher) Flush(entities []domain.Conference) []domain.Conference {
+func (flush flusher) Flush(ctx context.Context, entities []domain.Conference) []domain.Conference {
 	bulks, err := utils.SplitToBulksWithoutCopy(entities, flush.chunkSize)
 	if err != nil {
 		fmt.Println(fmt.Errorf("splitToBulksWithoutCopy failed + %w", err))
@@ -32,7 +33,7 @@ func (flush flusher) Flush(entities []domain.Conference) []domain.Conference {
 	var failedEntities []domain.Conference
 
 	for _, bulk := range bulks {
-		err = flush.entityRepo.AddEntities(bulk)
+		err = flush.entityRepo.AddEntities(ctx, bulk)
 		if err != nil {
 			fmt.Println(fmt.Errorf("repo.AddEntities failed + %w", err))
 			failedEntities = addFailedEntities(failedEntities, bulk)
