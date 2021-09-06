@@ -36,19 +36,19 @@ var _ = Describe("Flusher", func() {
 	Describe("All data are written", func() {
 		It("Write one element", func() {
 			oneItem := conferences[:1]
-			mockRepo.EXPECT().AddEntities(ctx, oneItem).Return(nil)
+			mockRepo.EXPECT().AddEntities(ctx, oneItem, nil).Return(nil)
 			Expect(testFlusher.Flush(ctx, oneItem)).To(BeNil())
 		})
 
 		It("Write less then chunkSize", func() {
 			twoItems := conferences[:2]
-			mockRepo.EXPECT().AddEntities(ctx, twoItems).Return(nil)
+			mockRepo.EXPECT().AddEntities(ctx, twoItems, nil).Return(nil)
 			Expect(testFlusher.Flush(ctx, twoItems)).To(BeNil())
 		})
 
 		It("Write more then chunkSize", func() {
 			someItems := conferences[:3]
-			mockRepo.EXPECT().AddEntities(ctx, someItems).Return(nil).AnyTimes()
+			mockRepo.EXPECT().AddEntities(ctx, someItems, nil).Return(nil).AnyTimes()
 			Expect(testFlusher.Flush(ctx, someItems)).To(BeNil())
 		})
 	})
@@ -57,8 +57,8 @@ var _ = Describe("Flusher", func() {
 		It("All data failed - should return all elements", func() {
 			err := errors.New("some error from repo")
 			gomock.InOrder(
-				mockRepo.EXPECT().AddEntities(ctx, conferences[:2]).Return(err).Times(1),
-				mockRepo.EXPECT().AddEntities(ctx, conferences[2:]).Return(err).Times(1),
+				mockRepo.EXPECT().AddEntities(ctx, conferences[:2], nil).Return(err).Times(1),
+				mockRepo.EXPECT().AddEntities(ctx, conferences[2:], nil).Return(err).Times(1),
 			)
 			testFlusher = flusher.NewFlusher(2, mockRepo)
 			Expect(testFlusher.Flush(ctx, conferences)).To(Equal(conferences))
@@ -66,8 +66,8 @@ var _ = Describe("Flusher", func() {
 
 		It("Some data failed - should return something", func() {
 			gomock.InOrder(
-				mockRepo.EXPECT().AddEntities(ctx, conferences[:2]).Return(nil).Times(1),
-				mockRepo.EXPECT().AddEntities(ctx, conferences[2:]).Return(errors.New("some error from repo")).Times(1),
+				mockRepo.EXPECT().AddEntities(ctx, conferences[:2], nil).Return(nil).Times(1),
+				mockRepo.EXPECT().AddEntities(ctx, conferences[2:], nil).Return(errors.New("some error from repo")).Times(1),
 			)
 			testFlusher = flusher.NewFlusher(2, mockRepo)
 			result := testFlusher.Flush(ctx, conferences)

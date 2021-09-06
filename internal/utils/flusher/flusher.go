@@ -33,7 +33,7 @@ func (flush flusher) Flush(ctx context.Context, entities []domain.Conference) []
 	var failedEntities []domain.Conference
 
 	for _, bulk := range bulks {
-		err = flush.entityRepo.AddEntities(ctx, bulk)
+		_, err = flush.entityRepo.AddEntities(ctx, bulk, nil)
 		if err != nil {
 			fmt.Println(fmt.Errorf("repo.AddEntities failed + %w", err))
 			failedEntities = addFailedEntities(failedEntities, bulk)

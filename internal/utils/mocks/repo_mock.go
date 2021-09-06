@@ -6,6 +6,7 @@ package mocks
 
 import (
 	context "context"
+	"fmt"
 	domain "ova-conference-api/internal/domain"
 	reflect "reflect"
 
@@ -36,17 +37,19 @@ func (m *MockRepo) EXPECT() *MockRepoMockRecorder {
 }
 
 // AddEntities mocks base method.
-func (m *MockRepo) AddEntities(ctx context.Context, entities []domain.Conference) error {
+func (m *MockRepo) AddEntities(ctx context.Context, entities []domain.Conference, callback func([]domain.Conference)) ([]domain.Conference, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddEntities", ctx, entities)
-	ret0, _ := ret[0].(error)
-	return ret0
+	fmt.Println("TIMERSSSS")
+	ret := m.ctrl.Call(m, "AddEntities", ctx, entities, callback)
+	ret0, _ := ret[0].([]domain.Conference)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // AddEntities indicates an expected call of AddEntities.
-func (mr *MockRepoMockRecorder) AddEntities(ctx, entities interface{}) *gomock.Call {
+func (mr *MockRepoMockRecorder) AddEntities(ctx, entities, callback interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddEntities", reflect.TypeOf((*MockRepo)(nil).AddEntities), ctx, entities)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddEntities", reflect.TypeOf((*MockRepo)(nil).AddEntities), ctx, entities, callback)
 }
 
 // AddEntity mocks base method.
@@ -62,6 +65,20 @@ func (m *MockRepo) AddEntity(ctx context.Context, entity domain.Conference) (*do
 func (mr *MockRepoMockRecorder) AddEntity(ctx, entity interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddEntity", reflect.TypeOf((*MockRepo)(nil).AddEntity), ctx, entity)
+}
+
+// Close mocks base method.
+func (m *MockRepo) Close() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Close")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Close indicates an expected call of Close.
+func (mr *MockRepoMockRecorder) Close() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockRepo)(nil).Close))
 }
 
 // DeleteEntity mocks base method.
@@ -120,4 +137,18 @@ func (m *MockRepo) Open() error {
 func (mr *MockRepoMockRecorder) Open() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Open", reflect.TypeOf((*MockRepo)(nil).Open))
+}
+
+// UpdateEntity mocks base method.
+func (m *MockRepo) UpdateEntity(ctx context.Context, entity domain.Conference) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateEntity", ctx, entity)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateEntity indicates an expected call of UpdateEntity.
+func (mr *MockRepoMockRecorder) UpdateEntity(ctx, entity interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEntity", reflect.TypeOf((*MockRepo)(nil).UpdateEntity), ctx, entity)
 }

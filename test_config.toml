@@ -1,0 +1,19 @@
+port = 8080
+connection_string = "host=localhost port=5432 user=postgres password=postgres dbname=ozon sslmode=disable"
+
+[metrics_configuration]
+port = 8090
+
+[health_check_configuration]
+port = 8081
+
+[domain_configuration]
+chunk_size = 1000
+
+[kafka_configuration]
+topic = "ova-conference-api"
+brokers = ["localhost:9092"]
+
+[jaeger_configuration]
+host = "jaeger"
+port = 6831

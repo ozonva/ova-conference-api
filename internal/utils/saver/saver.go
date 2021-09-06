@@ -90,7 +90,7 @@ func (rep repositorySaver) awaitingFlush() {
 func NewSaver(capacity int, flusher flusher.Flusher) Saver {
 	return &repositorySaver{
 		flusher:     flusher,
-		buffer:      make([]domain.Conference, capacity, capacity),
+		buffer:      make([]domain.Conference, capacity),
 		Mutex:       &sync.Mutex{},
 		initializer: &sync.Once{},
 		closeChanel: make(chan struct{}),

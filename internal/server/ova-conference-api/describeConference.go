@@ -6,12 +6,12 @@ import (
 	conf "ova-conference-api/pkg/api/github.com/ozonva/ova-conference-api/pkg/ova-conference-api"
 )
 
-func (server *GRPCServer) DescribeConference(ctx context.Context, request *conf.EntityConferenceRequest) (*conf.ConferenceResponse, error) {
+func (confServer *ConferenceServer) DescribeConference(ctx context.Context, request *conf.EntityConferenceRequest) (*conf.ConferenceEntity, error) {
 	log.Info().Msgf("DescribeConference request: %v", request)
-	result, err := server.repo.DescribeEntity(ctx, request.Id)
+	result, err := confServer.repo.DescribeEntity(ctx, request.Id)
 	if err != nil {
 		log.Err(err)
 		return nil, err
 	}
-	return ToConferenceResponse(result), err
+	return FromDomainToConferenceEntity(result), err
 }
