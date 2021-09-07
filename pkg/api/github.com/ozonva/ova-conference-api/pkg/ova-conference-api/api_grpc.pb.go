@@ -19,10 +19,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConferencesClient interface {
-	CreateConference(ctx context.Context, in *CreateConferenceRequest, opts ...grpc.CallOption) (*ConferenceResponse, error)
-	DescribeConference(ctx context.Context, in *EntityConferenceRequest, opts ...grpc.CallOption) (*ConferenceResponse, error)
-	ListConference(ctx context.Context, in *ListConferenceRequest, opts ...grpc.CallOption) (*ListConferenceResponse, error)
+	CreateConference(ctx context.Context, in *CreateConferenceRequest, opts ...grpc.CallOption) (*ConferenceEntity, error)
+	DescribeConference(ctx context.Context, in *EntityConferenceRequest, opts ...grpc.CallOption) (*ConferenceEntity, error)
+	ListConference(ctx context.Context, in *ListConferenceRequest, opts ...grpc.CallOption) (*ListConferenceEntity, error)
 	RemoveConference(ctx context.Context, in *EntityConferenceRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	MultiCreateConference(ctx context.Context, in *MultiCreateConferenceRequest, opts ...grpc.CallOption) (*ListConferenceEntity, error)
+	UpdateConference(ctx context.Context, in *ConferenceEntity, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type conferencesClient struct {
@@ -33,8 +35,8 @@ func NewConferencesClient(cc grpc.ClientConnInterface) ConferencesClient {
 	return &conferencesClient{cc}
 }
 
-func (c *conferencesClient) CreateConference(ctx context.Context, in *CreateConferenceRequest, opts ...grpc.CallOption) (*ConferenceResponse, error) {
-	out := new(ConferenceResponse)
+func (c *conferencesClient) CreateConference(ctx context.Context, in *CreateConferenceRequest, opts ...grpc.CallOption) (*ConferenceEntity, error) {
+	out := new(ConferenceEntity)
 	err := c.cc.Invoke(ctx, "/ova.conference.api.Conferences/CreateConference", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -42,8 +44,8 @@ func (c *conferencesClient) CreateConference(ctx context.Context, in *CreateConf
 	return out, nil
 }
 
-func (c *conferencesClient) DescribeConference(ctx context.Context, in *EntityConferenceRequest, opts ...grpc.CallOption) (*ConferenceResponse, error) {
-	out := new(ConferenceResponse)
+func (c *conferencesClient) DescribeConference(ctx context.Context, in *EntityConferenceRequest, opts ...grpc.CallOption) (*ConferenceEntity, error) {
+	out := new(ConferenceEntity)
 	err := c.cc.Invoke(ctx, "/ova.conference.api.Conferences/DescribeConference", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -51,8 +53,8 @@ func (c *conferencesClient) DescribeConference(ctx context.Context, in *EntityCo
 	return out, nil
 }
 
-func (c *conferencesClient) ListConference(ctx context.Context, in *ListConferenceRequest, opts ...grpc.CallOption) (*ListConferenceResponse, error) {
-	out := new(ListConferenceResponse)
+func (c *conferencesClient) ListConference(ctx context.Context, in *ListConferenceRequest, opts ...grpc.CallOption) (*ListConferenceEntity, error) {
+	out := new(ListConferenceEntity)
 	err := c.cc.Invoke(ctx, "/ova.conference.api.Conferences/ListConference", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -69,14 +71,34 @@ func (c *conferencesClient) RemoveConference(ctx context.Context, in *EntityConf
 	return out, nil
 }
 
+func (c *conferencesClient) MultiCreateConference(ctx context.Context, in *MultiCreateConferenceRequest, opts ...grpc.CallOption) (*ListConferenceEntity, error) {
+	out := new(ListConferenceEntity)
+	err := c.cc.Invoke(ctx, "/ova.conference.api.Conferences/MultiCreateConference", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *conferencesClient) UpdateConference(ctx context.Context, in *ConferenceEntity, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ova.conference.api.Conferences/UpdateConference", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ConferencesServer is the server API for Conferences service.
 // All implementations must embed UnimplementedConferencesServer
 // for forward compatibility
 type ConferencesServer interface {
-	CreateConference(context.Context, *CreateConferenceRequest) (*ConferenceResponse, error)
-	DescribeConference(context.Context, *EntityConferenceRequest) (*ConferenceResponse, error)
-	ListConference(context.Context, *ListConferenceRequest) (*ListConferenceResponse, error)
+	CreateConference(context.Context, *CreateConferenceRequest) (*ConferenceEntity, error)
+	DescribeConference(context.Context, *EntityConferenceRequest) (*ConferenceEntity, error)
+	ListConference(context.Context, *ListConferenceRequest) (*ListConferenceEntity, error)
 	RemoveConference(context.Context, *EntityConferenceRequest) (*empty.Empty, error)
+	MultiCreateConference(context.Context, *MultiCreateConferenceRequest) (*ListConferenceEntity, error)
+	UpdateConference(context.Context, *ConferenceEntity) (*empty.Empty, error)
 	mustEmbedUnimplementedConferencesServer()
 }
 
@@ -84,17 +106,23 @@ type ConferencesServer interface {
 type UnimplementedConferencesServer struct {
 }
 
-func (UnimplementedConferencesServer) CreateConference(context.Context, *CreateConferenceRequest) (*ConferenceResponse, error) {
+func (UnimplementedConferencesServer) CreateConference(context.Context, *CreateConferenceRequest) (*ConferenceEntity, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateConference not implemented")
 }
-func (UnimplementedConferencesServer) DescribeConference(context.Context, *EntityConferenceRequest) (*ConferenceResponse, error) {
+func (UnimplementedConferencesServer) DescribeConference(context.Context, *EntityConferenceRequest) (*ConferenceEntity, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeConference not implemented")
 }
-func (UnimplementedConferencesServer) ListConference(context.Context, *ListConferenceRequest) (*ListConferenceResponse, error) {
+func (UnimplementedConferencesServer) ListConference(context.Context, *ListConferenceRequest) (*ListConferenceEntity, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListConference not implemented")
 }
 func (UnimplementedConferencesServer) RemoveConference(context.Context, *EntityConferenceRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveConference not implemented")
+}
+func (UnimplementedConferencesServer) MultiCreateConference(context.Context, *MultiCreateConferenceRequest) (*ListConferenceEntity, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MultiCreateConference not implemented")
+}
+func (UnimplementedConferencesServer) UpdateConference(context.Context, *ConferenceEntity) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateConference not implemented")
 }
 func (UnimplementedConferencesServer) mustEmbedUnimplementedConferencesServer() {}
 
@@ -181,6 +209,42 @@ func _Conferences_RemoveConference_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Conferences_MultiCreateConference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MultiCreateConferenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConferencesServer).MultiCreateConference(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ova.conference.api.Conferences/MultiCreateConference",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConferencesServer).MultiCreateConference(ctx, req.(*MultiCreateConferenceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Conferences_UpdateConference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConferenceEntity)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConferencesServer).UpdateConference(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ova.conference.api.Conferences/UpdateConference",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConferencesServer).UpdateConference(ctx, req.(*ConferenceEntity))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Conferences_ServiceDesc is the grpc.ServiceDesc for Conferences service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -203,6 +267,14 @@ var Conferences_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveConference",
 			Handler:    _Conferences_RemoveConference_Handler,
+		},
+		{
+			MethodName: "MultiCreateConference",
+			Handler:    _Conferences_MultiCreateConference_Handler,
+		},
+		{
+			MethodName: "UpdateConference",
+			Handler:    _Conferences_UpdateConference_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

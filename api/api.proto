@@ -8,10 +8,13 @@ import "google/protobuf/empty.proto";
 option go_package = "github.com/ozonva/ova-conference-api/pkg/ova-conference-api";
 
 service Conferences{
-  rpc CreateConference(CreateConferenceRequest) returns (ConferenceResponse){};
-  rpc DescribeConference(EntityConferenceRequest) returns (ConferenceResponse){};
-  rpc ListConference(ListConferenceRequest) returns (ListConferenceResponse){};
+  rpc CreateConference(CreateConferenceRequest) returns (ConferenceEntity){};
+  rpc DescribeConference(EntityConferenceRequest) returns (ConferenceEntity){};
+  rpc ListConference(ListConferenceRequest) returns (ListConferenceEntity){};
   rpc RemoveConference(EntityConferenceRequest) returns (google.protobuf.Empty){};
+
+  rpc MultiCreateConference(MultiCreateConferenceRequest) returns (ListConferenceEntity){};
+  rpc UpdateConference(ConferenceEntity) returns (google.protobuf.Empty){};
 }
 
 message ListConferenceRequest{
@@ -26,15 +29,19 @@ message CreateConferenceRequest{
   int32 speakerCount = 4;
 }
 
+message MultiCreateConferenceRequest{
+  repeated CreateConferenceRequest Items = 1;
+}
+
 message EntityConferenceRequest{
   int64 id = 1;
 }
 
-message ListConferenceResponse{
-  repeated ConferenceResponse Items = 1;
+message ListConferenceEntity{
+  repeated ConferenceEntity Items = 1;
 }
 
-message ConferenceResponse{
+message ConferenceEntity{
   int64 id = 1;
   string name = 2;
   google.protobuf.Timestamp eventTime = 3;

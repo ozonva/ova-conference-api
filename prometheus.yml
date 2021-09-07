@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 15s
+
+  scrape_configs:
+    - job_name: "ova-conference-api"
+    static_configs:
+      - targets:
+          - ova-conference-api:9100

@@ -22,6 +22,10 @@ deps:
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 
+.PHONY: build
+build: deps
+	CGO_ENABLED=0 go build -o $(LOCAL_BIN)/ova-conference-api cmd/ova-conference-api/main.go
+
 .PHONY: generate
 generate:
 	protoc --proto_path=. -I vendor.protogen \
@@ -41,7 +45,17 @@ test: mocks
 migration:
 	goose postgres "user=postgres password=postgres  dbname=ozon sslmode=disable" up
 
+.PHONY: lint
+lint:
+	golangci-lint run
+
 .PHONY: mocks
 mocks:
 	rm -rf ./internal/mocks/mock_*
 	mockgen -source=./internal/utils/repo/repo.go -destination=./internal/utils/mocks/repo_mock.go -package mocks
+	mockgen -source=./internal/kafka/producer.go -destination=./internal/infrastructure_mocks/producer_mock.go -package infrastructure_mocks
+	mockgen -source=./internal/metrics/metrics.go -destination=./internal/infrastructure_mocks/metrics_mock.go -package infrastructure_mocks
+
+.PHONY: docker-build
+docker-build:
+	docker-compose build
